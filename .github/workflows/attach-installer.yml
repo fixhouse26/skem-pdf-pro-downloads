@@ -1,41 +1,14 @@
 name: Attach signed Windows installer
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/attach-installer.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  attach:
+  notice:
     runs-on: ubuntu-latest
-    env:
-      ARTIFACT_URL: "https://sdmntprwestus3.oaiusercontent.com/files/00000000-dc0c-81fd-90c9-cff376c45061/raw?se=2026-10-25T07%3A39%3A47Z&sp=r&sv=2026-02-06&sr=b&scid=e0851df7-53e4-4ba8-bd4f-82775109a421&skoid=2d2fbb03-9efb-4ad0-a91c-1db2f5a47997&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-25T02%3A21%3A54Z&ske=2026-10-26T02%3A21%3A54Z&sks=b&skv=2026-02-06&sig=2RvfmyuqOt3nrGiMnHkakPS1vW9tMBLaZ%2B09B/cOypc%3D"
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Download verified signed build
-        shell: bash
-        run: curl --fail --location --retry 3 "$ARTIFACT_URL" --output signed-release.zip
-
-      - name: Verify and prepare assets
-        shell: bash
-        run: |
-          unzip -t signed-release.zip
-          mkdir release
-          unzip signed-release.zip -d release
-          mv "release/SKEM PDF Pro Setup 1.3.0.exe" "release/SKEM-PDF-Pro-Setup-1.3.0.exe"
-          test "$(sha256sum release/SKEM-PDF-Pro-Setup-1.3.0.exe | cut -d' ' -f1)" = "63bcda419fb03a12a1653191ad742024d417aea8e365eb46de3dc6a2df204da3"
-
-      - name: Publish installer and verification files
-        shell: bash
-        run: |
-          gh release upload v1.3.0 \
-            release/SKEM-PDF-Pro-Setup-1.3.0.exe \
-            release/SHA256.txt \
-            release/signature-verification.json \
-            --repo fixhouse26/skem-pdf-pro-downloads \
-            --clobber
+      - name: Release status
+        run: echo "SKEM PDF Pro 1.3.0 signed release assets are already published."
